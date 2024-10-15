@@ -1,3 +1,9 @@
+Proyecto 1: Reto_Técnico_Analista_Automatización_Servicios 
+Parte 1, resultado de Postman.
+Parte 2, del proyecto 1.
+Parte 3, del proyecto 1.
+Parte 4, del proyecto 1.
+Proyecto 2: Reto_Técnico_Analista_Automatización_Frontend
 # Proyecto de Automatización de Pruebas API
 
 Este proyecto tiene como objetivo automatizar un conjunto de llamadas a la API del sitio web [ReqRes](https://reqres.in/) utilizando **Java**, **RestAssured**, **Serenity BDD**, el patrón **Screenplay**, y **Cucumber**. Este README documenta cada paso del proceso, proporcionando detalles sobre la configuración, los escenarios de prueba y cómo ejecutar las pruebas.
