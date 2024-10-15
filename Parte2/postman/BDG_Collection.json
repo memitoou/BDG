@@ -1,0 +1,283 @@
+{
+	"info": {
+		"_postman_id": "108df3ea-22c5-484d-8048-e214e06148e5",
+		"name": "BDG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19038813"
+	},
+	"item": [
+		{
+			"name": "ListarUsuarios",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (!pm.environment.get(\"currentPage\")) {",
+							"    pm.environment.set(\"currentPage\", 1);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Obtener la respuesta JSON",
+							"let responseJson = pm.response.json();",
+							"",
+							"// Inicializar un array para almacenar todos los usuarios si no existe",
+							"if (!pm.environment.get(\"allUsers\")) {",
+							"    pm.environment.set(\"allUsers\", JSON.stringify([]));",
+							"}",
+							"",
+							"let allUsers = JSON.parse(pm.environment.get(\"allUsers\"));",
+							"",
+							"// Agregar los usuarios de la página actual al array",
+							"allUsers = allUsers.concat(responseJson.data);",
+							"",
+							"// Mostrar el total de usuarios en la consola",
+							"console.log(`Total de usuarios en la página ${pm.environment.get(\"currentPage\")}: ${responseJson.data.length}`);",
+							"",
+							"// Mostrar la lista de usuarios de la página actual",
+							"responseJson.data.forEach(user => {",
+							"    console.log(`ID: ${user.id}, Nombre: ${user.first_name} ${user.last_name}, Email: ${user.email}`);",
+							"});",
+							"",
+							"// Almacenar el total de páginas en una variable de entorno",
+							"pm.environment.set(\"totalPages\", responseJson.total_pages);",
+							"",
+							"// Verificar si hay más páginas",
+							"if (pm.environment.get(\"currentPage\") < responseJson.total_pages) {",
+							"    // Incrementar la página actual",
+							"    pm.environment.set(\"currentPage\", pm.environment.get(\"currentPage\") + 1);",
+							"    // Hacer una nueva solicitud a la siguiente página",
+							"    pm.sendRequest({",
+							"        url: `https://reqres.in/api/users?page=${pm.environment.get(\"currentPage\")}`,",
+							"        method: 'GET',",
+							"        header: {",
+							"            'Content-Type': 'application/json'",
+							"        }",
+							"    }, (err, res) => {",
+							"        if (err) {",
+							"            console.error(err);",
+							"        } else {",
+							"            // Procesar la respuesta de la nueva solicitud",
+							"            let newResponseJson = res.json();",
+							"",
+							"            // Agregar los usuarios de la nueva página al array",
+							"            allUsers = allUsers.concat(newResponseJson.data);",
+							"",
+							"            // Mostrar la lista de usuarios acumulados",
+							"            console.log(`Total de usuarios acumulados hasta la página ${pm.environment.get(\"currentPage\")}: ${allUsers.length}`);",
+							"",
+							"            // Mostrar la lista de usuarios acumulados",
+							"            allUsers.forEach(user => {",
+							"                console.log(`ID: ${user.id}, Nombre: ${user.first_name} ${user.last_name}, Email: ${user.email}`);",
+							"            });",
+							"",
+							"            // Repetir la comprobación de páginas",
+							"            pm.environment.set(\"totalPages\", newResponseJson.total_pages);",
+							"",
+							"            if (pm.environment.get(\"currentPage\") < newResponseJson.total_pages) {",
+							"                pm.execution.setNextRequest(\"Listar Usuarios\"); // Asegúrate de que este nombre sea correcto",
+							"            } else {",
+							"                // Si no hay más páginas, restablecer la variable de página y mostrar todos los usuarios",
+							"                pm.environment.unset(\"currentPage\");",
+							"                pm.environment.unset(\"totalPages\");",
+							"                pm.environment.set(\"allUsers\", JSON.stringify(allUsers)); // Guardar todos los usuarios",
+							"                console.log(\"Todos los usuarios acumulados:\", allUsers);",
+							"            }",
+							"        }",
+							"    });",
+							"} else {",
+							"    // Si no hay más páginas, restablecer la variable de página",
+							"    pm.environment.unset(\"currentPage\");",
+							"    pm.environment.unset(\"totalPages\");",
+							"    console.log(\"Todos los usuarios acumulados:\", allUsers);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users?page={{currentPage}}",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{currentPage}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegistrarUsuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Guarda el token en una variable de entorno",
+							"pm.environment.set(\"token\", pm.response.json().token);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"eve.holt@reqres.in\",\n    \"password\": \"pistol\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/register",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RecursoProtegido",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "ActualizarUsuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Nombre actualizado\", function () {",
+							"    pm.expect(pm.response.json().name).to.eql(\"Jane Doe\");",
+							"});",
+							"",
+							"pm.test(\"Trabajo actualizado\", function () {",
+							"    pm.expect(pm.response.json().job).to.eql(\"Software Engineer\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Jane Doe\",\n    \"job\": \"Software Engineer\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users/2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarUsuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Eliminación exitosa\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"// Comprobar que el usuario no existe (Opcional)",
+							"pm.sendRequest('https://reqres.in/api/users/2', function (err, res) {",
+							"    pm.test(\"Usuario eliminado\", function () {",
+							"        pm.expect(res).to.have.property('code', 404);",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users/2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

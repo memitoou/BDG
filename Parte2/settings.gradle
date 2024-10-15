@@ -1,0 +1,8 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal() // Repositorio de plugins de Gradle
+        maven { url 'https://repo.serenity-bdd.info/' } // Repositorio de Serenity BDD
+        mavenCentral() // Repositorio Maven Central
+    }
+}
+
