@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'net.serenity-bdd.serenity-gradle-plugin' version '3.3.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Dependencias de Serenity BDD
+    implementation 'net.serenity-bdd:serenity-core:3.3.0'
+    implementation 'net.serenity-bdd:serenity-screenplay:3.3.0'
+    implementation 'net.serenity-bdd:serenity-junit5:3.3.0'
+    implementation 'net.serenity-bdd:serenity-rest-assured:3.3.0'
+
+    // Dependencias de Selenium WebDriver
+    implementation 'org.seleniumhq.selenium:selenium-java:4.5.0'
+
+    // Dependencias de Cucumber
+    testImplementation 'io.cucumber:cucumber-java:7.13.0'
+    testImplementation 'io.cucumber:cucumber-junit:7.13.0'
+
+    // Dependencias de JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+}
+
+// Configuración para usar JUnit 5
+test {
+    useJUnitPlatform()
+}
+
